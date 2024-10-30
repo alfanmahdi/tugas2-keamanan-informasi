@@ -2,28 +2,27 @@ import socket
 from tugas1KI_desAlgorithm import encrypt_text, decrypt_text, rkb, rk
 
 def client_program():
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
+    host = socket.gethostname()
+    port = 5000
 
-    client_socket = socket.socket()  # instantiate
-    client_socket.connect((host, port))  # connect to the server
+    client_socket = socket.socket()
+    client_socket.connect((host, port))
 
-    message = input(" -> ")  # take input
-    encrypted_response = encrypt_text(message, rkb, rk)
+    print("Connected to the server. Type 'bye' to exit.")
+    message = input(" -> ")
 
     while message.lower().strip() != 'bye':
-        client_socket.send(encrypted_response.encode())  # send message
-        data = client_socket.recv(1024).decode()  # receive response
+        encrypted_message = encrypt_text(message, rkb, rk)
+        client_socket.send(encrypted_message.encode())
+
+        data = client_socket.recv(1024).decode()
         decrypted_message = decrypt_text(data, rkb[::-1], rk[::-1])
 
-        print('Received from server before decrypt: ' + data)
-        print('Received from server: ' + decrypted_message)  # show in terminal
+        print("Received from other client before decrypt:", data)
+        print("Received from other client:", decrypted_message)
 
-        message = input(" -> ")  # again take input
-        encrypted_response = encrypt_text(message, rkb, rk)
-
-    client_socket.close()  # close the connection
-
+        message = input(" -> ")
+    client_socket.close()
 
 if __name__ == '__main__':
     client_program()
